@@ -6,11 +6,7 @@ DECLARE
 BEGIN
 -- function call
 	deptname := get_dept_name('123456789');
-	IF deptname != '' THEN
-		dbms_output.put_line('Department name for 123456789 is ' || deptname);
-  ELSE
-    dbms_output.put_line('Function call to get_dept_name with EMPSSN of 123456789 failed.');
-	END IF;
+	dbms_output.put_line('Department name for 123456789 is "' || deptname ||'"');
 END;
 /
 
@@ -22,10 +18,27 @@ DECLARE
 BEGIN
 -- function call
 	mgr_name := get_mgr_name('Research');
-	IF deptname != '' THEN
-		dbms_output.put_line('Manager name for Research is ' || mgr_name);
-  ELSE
-    dbms_output.put_line('Function call to get_mgr_namek with DEPT_NM of Research failed.');
-	END IF;
+	dbms_output.put_line('Manager name for Research is "' || mgr_name || '"');
 END;
 /
+
+-- **** Test **** -- get_prjmgr_name call
+DECLARE
+	mgr_name EMPLOYEE.fname%type;
+BEGIN
+-- function call
+	mgr_name := get_prjmgr_name('ProductZ');
+	dbms_output.put_line('Manager name of the department for ProductZ is "' || mgr_name || '"');
+END;
+/
+
+-- **** Test **** -- get_prjmgr_name call
+
+-- Before call: note the salary.
+SELECT fname, minit, lname, salary FROM EMPLOYEE WHERE ssn = '888665555';
+
+-- Increase salary by 10%
+exec increase_salary('888665555', 10);
+
+-- After call: note the salary increased by 10 percent.
+SELECT fname, minit, lname, salary FROM EMPLOYEE WHERE ssn = '888665555';

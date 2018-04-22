@@ -2,7 +2,6 @@
 -- Inserts the data for the company database.
 -- Ian Kirkpatrick
 -- ITC 341 Homework 7		Mar. 19, 2018
-
 INSERT INTO DEPARTMENT VALUES ('Research', 5, NULL, NULL);
 COMMIT;
 INSERT INTO DEPARTMENT VALUES ('Administration', 4, NULL, NULL);

@@ -60,9 +60,10 @@ show errors
 CREATE OR REPLACE TRIGGER depend_trigger
 AFTER INSERT ON DEPENDANT
 BEGIN
+	UPDATE DEPENDANT SET dependant_name = UPPER(dependant_name);
 	UPDATE DEPENDANT SET essn = UPPER(essn);
-	UPDATE DEPENDANT SET sex = UPPER(sex)
-	UPDATE DEPENDANT SET relationship = UPPER(relationship)
+	UPDATE DEPENDANT SET sex = UPPER(sex);
+	UPDATE DEPENDANT SET relationship = UPPER(relationship);
 END;
 /
 show errors

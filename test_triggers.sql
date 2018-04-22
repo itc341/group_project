@@ -4,14 +4,9 @@
 SELECT * FROM EMPLOYEE;
 
 -- Insert into table.
-INSERT INTO EMPLOYEE VALUES ('Ian', 'A', 'Kirkpatrick', '123456789', '09-JAN-1965', '232 Lawson, Saline, MI', 'M', 95000, '123456789', 5);
+INSERT INTO EMPLOYEE VALUES ('Ian', 'A', 'Kirkpatrick', '999999999', '09-JAN-1965', '232 Lawson, Saline, MI', 'M', 95000, '123456789', 5);
 
 -- Characters should be uppercase now.
-SELECT * FROM EMPLOYEE;
-
-ROLLBACK;
-
--- Characters should be lowercase now.
 SELECT * FROM EMPLOYEE;
 
 
@@ -25,11 +20,6 @@ UPDATE DEPARTMENT SET mgr_ssn = '333445555' WHERE dnumber = 6;
 -- Characters should be uppercase now.
 SELECT * FROM DEPARTMENT;
 
-ROLLBACK;
-
--- Characters should be lowercase now.
-SELECT * FROM DEPARTMENT;
-
 
 
 -- Test dept_loc_trigger
@@ -39,11 +29,6 @@ SELECT * FROM DEPT_LOCATIONS;
 INSERT INTO DEPT_LOCATIONS VALUES (1, 'Sugarland');
 
 -- Characters should be uppercase now.
-SELECT * FROM DEPT_LOCATIONS;
-
-ROLLBACK;
-
--- Characters should be lowercase now.
 SELECT * FROM DEPT_LOCATIONS;
 
 
@@ -58,11 +43,6 @@ COMMIT;
 -- Characters should be uppercase now.
 SELECT * FROM PROJECT;
 
-ROLLBACK;
-
--- Characters should be lowercase now.
-SELECT * FROM PROJECT;
-
 
 
 -- Test works_on_trigger
@@ -75,11 +55,6 @@ COMMIT;
 -- Characters should be uppercase now.
 SELECT * FROM WORKS_ON;
 
-ROLLBACK;
-
--- Characters should be lowercase now.
-SELECT * FROM WORKS_ON;
-
 
 
 -- Test depend_trigger
@@ -90,9 +65,4 @@ INSERT INTO DEPENDANT VALUES ('123456789', 'Ian', 'M', '05-MAY-1967', 'Brother')
 COMMIT;
 
 -- Characters should be uppercase now.
-SELECT * FROM DEPENDANT;
-
-ROLLBACK;
-
--- Characters should be lowercase now.
 SELECT * FROM DEPENDANT;
