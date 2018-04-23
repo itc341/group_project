@@ -28,7 +28,7 @@ END;
 /
 show errors
 
--- (for department table only)
+-- (for dept_location table only)
 CREATE OR REPLACE TRIGGER dept_loc_trigger
 AFTER INSERT ON DEPT_LOCATIONS
 BEGIN
@@ -37,7 +37,7 @@ END;
 /
 show errors
 
--- (for department table only)
+-- (for project table only)
 CREATE OR REPLACE TRIGGER proj_trigger
 AFTER INSERT ON PROJECT
 BEGIN
@@ -47,7 +47,7 @@ END;
 /
 show errors
 
--- (for department table only)
+-- (for works_on table only)
 CREATE OR REPLACE TRIGGER works_on_trigger
 AFTER INSERT ON WORKS_ON
 BEGIN
@@ -56,7 +56,7 @@ END;
 /
 show errors
 
--- (for department table only)
+-- (for dependant table only)
 CREATE OR REPLACE TRIGGER depend_trigger
 AFTER INSERT ON DEPENDANT
 BEGIN
