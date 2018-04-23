@@ -1,0 +1,1696 @@
+SQL> start U:/itc341/group_project/hw-7/create_schema.sql
+SQL> -- create_schema.sql
+SQL> -- Creates the database schema for the company database.
+SQL> -- Ian Kirkpatrick
+SQL> -- ITC 341 Homework 7	     Mar. 19, 2018
+SQL> 
+SQL> DROP TABLE EMPLOYEE CASCADE CONSTRAINTS;
+
+Table dropped.
+
+Elapsed: 00:00:00.02
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> CREATE TABLE EMPLOYEE
+  2  (
+  3  	     fname	     VARCHAR(20),
+  4  	     minit	     CHAR(1),
+  5  	     lname	     VARCHAR(20),
+  6  	     ssn		     CHAR(9),
+  7  	     bdate	     DATE,
+  8  	     address	     VARCHAR(100),
+  9  	     sex		     CHAR(1),
+ 10  	     salary	     INT,
+ 11  	     super_ssn	     CHAR(9),
+ 12  	     dno		     INT,
+ 13  	     CONSTRAINT EMPPKEY
+ 14  		     PRIMARY KEY (ssn),
+ 15  	     CONSTRAINT SALRNGE
+ 16  		     CHECK (salary>=20000 OR salary<=100000),
+ 17  	     CONSTRAINT SEXOPTS
+ 18  		     CHECK (sex = 'M' OR sex = 'F')
+ 19  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> DROP TABLE DEPARTMENT CASCADE CONSTRAINTS;
+
+Table dropped.
+
+Elapsed: 00:00:00.02
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> CREATE TABLE DEPARTMENT
+  2  (
+  3  	     dname		     VARCHAR(20),
+  4  	     dnumber		     INT,
+  5  	     mgr_ssn		     CHAR(9),
+  6  	     mgr_start_date  DATE,
+  7  	     CONSTRAINT DEPPKEY
+  8  		     PRIMARY KEY (dnumber),
+  9  	     CONSTRAINT DEP_MGR
+ 10  		     FOREIGN KEY (mgr_ssn) REFERENCES EMPLOYEE (ssn)
+ 11  		     ON DELETE SET NULL
+ 12  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> ALTER TABLE EMPLOYEE ADD
+  2  	     CONSTRAINT EMP_DEPT
+  3  		     FOREIGN KEY (dno) REFERENCES DEPARTMENT (dnumber)
+  4  		     ON DELETE SET NULL;
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> ALTER TABLE EMPLOYEE ADD
+  2  	     CONSTRAINT EMP_SUPER
+  3  		     FOREIGN KEY (super_ssn) REFERENCES EMPLOYEE (ssn)
+  4  		     ON DELETE SET NULL;
+
+Table altered.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> DROP TABLE DEPT_LOCATIONS CASCADE CONSTRAINTS;
+
+Table dropped.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> CREATE TABLE DEPT_LOCATIONS
+  2  (
+  3  	     dnumber	     INT,
+  4  	     dlocation	     VARCHAR(20),
+  5  	     CONSTRAINT DLOCPKEY
+  6  		     PRIMARY KEY (dnumber, dlocation),
+  7  	     CONSTRAINT DEP_LOC
+  8  		     FOREIGN KEY (dnumber) REFERENCES DEPARTMENT (dnumber)
+  9  		     ON DELETE SET NULL
+ 10  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> DROP TABLE PROJECT CASCADE CONSTRAINTS;
+
+Table dropped.
+
+Elapsed: 00:00:00.02
+SQL> COMMIt;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> CREATE TABLE PROJECT
+  2  (
+  3  	     pname	     VARCHAR(20),
+  4  	     pnumber	     INT,
+  5  	     plocation	     VARCHAR(20),
+  6  	     dnum	     INT,
+  7  	     CONSTRAINT PROJPKEY
+  8  		     PRIMARY KEY (pnumber),
+  9  	     CONSTRAINT PROJ_DEP
+ 10  		     FOREIGN KEY (dnum) REFERENCES DEPARTMENT (dnumber)
+ 11  		     ON DELETE SET NULL
+ 12  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> DROP TABLE WORKS_ON CASCADE CONSTRAINTS;
+
+Table dropped.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> CREATE TABLE WORKS_ON
+  2  (
+  3  	     essn    CHAR(9),
+  4  	     pno	     INT,
+  5  	     hours   FLOAT,
+  6  	     CONSTRAINT WORKSONPKEY
+  7  		     PRIMARY KEY (essn, pno),
+  8  	     CONSTRAINT WORKS_ON_EMP
+  9  		     FOREIGN KEY (essn) REFERENCES EMPLOYEE (ssn)
+ 10  		     ON DELETE SET NULL,
+ 11  	     CONSTRAINT WORKS_ON_PROJ
+ 12  		     FOREIGN KEY (pno) REFERENCES PROJECT (pnumber)
+ 13  		     ON DELETE SET NULL
+ 14  );
+
+Table created.
+
+Elapsed: 00:00:00.02
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> DROP TABLE DEPENDANT CASCADE CONSTRAINTS;
+
+Table dropped.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> CREATE TABLE DEPENDANT
+  2  (
+  3  	     essn		     CHAR(9),
+  4  	     dependant_name  VARCHAR(20),
+  5  	     sex			     CHAR(1),
+  6  	     bdate		     DATE,
+  7  	     relationship    VARCHAR(15),
+  8  	     CONSTRAINT DEPENDPKEY
+  9  		     PRIMARY KEY (essn, dependant_name),
+ 10  	     CONSTRAINT DEPEND_EMP
+ 11  		     FOREIGN KEY (essn) REFERENCES EMPLOYEE (ssn)
+ 12  );
+
+Table created.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> start U:/itc341/group_project/hw-7/insert_data.sql
+SQL> -- insert_data.sql
+SQL> -- Inserts the data for the company database.
+SQL> -- Ian Kirkpatrick
+SQL> -- ITC 341 Homework 7	     Mar. 19, 2018
+SQL> INSERT INTO DEPARTMENT VALUES ('Research', 5, NULL, NULL);
+
+1 row created.
+
+Elapsed: 00:00:00.01
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPARTMENT VALUES ('Administration', 4, NULL, NULL);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPARTMENT VALUES ('Headquarters', 1, NULL, NULL);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> INSERT INTO EMPLOYEE VALUES ('John', 'B', 'Smith', '123456789', '09-JAN-1965', '731 Fondren, Houston, TX', 'M', 30000, NULL, 5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO EMPLOYEE VALUES ('Franklin', 'T', 'Wong', '333445555', '08-DEC-1955', '638 Voss, Houston, TX', 'M', 40000, NULL, 5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO EMPLOYEE VALUES ('Alicia', 'J', 'Zelaya', '999887777', '19-JAN-1968', '3321 Castle, Spring, TX', 'F', 25000, NULL, 4);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO EMPLOYEE VALUES ('Jennifer', 'S', 'Wallace', '987654321', '20-JUN-1941', '291 Berry, Bellaire, TX', 'F', 43000, NULL, 4);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO EMPLOYEE VALUES ('Ramesh', 'K', 'Narayan', '666884444', '15-SEP-1962', '975 Fire Oak, Humble, TX', 'M', 38000, NULL, 5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO EMPLOYEE VALUES ('Joyce', 'A', 'English', '453453453', '31-JUL-1972', '5631 Rice, Houston, TX', 'F', 25000, NULL, 5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO EMPLOYEE VALUES ('Ahmad', 'V', 'Jabbar', '987987987', '29-MAR-1969', '980 Dallas, Houston, TX', 'M', 25000, NULL, 4);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO EMPLOYEE VALUES ('James', 'E', 'Borg', '888665555', '10-NOV-1973', '450 Stone, Houston, TX', 'M', 55000, NULL, 1);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> UPDATE DEPARTMENT SET mgr_ssn = '333445555' WHERE dnumber = 5;
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> UPDATE DEPARTMENT SET mgr_ssn = '987654321' WHERE dnumber = 4;
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> UPDATE DEPARTMENT SET mgr_ssn = '888665555' WHERE dnumber = 1;
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> UPDATE EMPLOYEE SET super_ssn = '333445555' WHERE ssn = '123456789';
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> UPDATE EMPLOYEE SET super_ssn = '888665555' WHERE ssn = '333445555';
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> UPDATE EMPLOYEE SET super_ssn = '987654321' WHERE ssn = '999887777';
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> UPDATE EMPLOYEE SET super_ssn = '888665555' WHERE ssn = '987654321';
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> UPDATE EMPLOYEE SET super_ssn = '333445555' WHERE ssn = '666884444';
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> UPDATE EMPLOYEE SET super_ssn = '333445555' WHERE ssn = '453453453';
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> UPDATE EMPLOYEE SET super_ssn = '987654321' WHERE ssn = '987987987';
+
+1 row updated.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> INSERT INTO DEPT_LOCATIONS VALUES (1, 'Houston');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPT_LOCATIONS VALUES (4, 'Stafford');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPT_LOCATIONS VALUES (5, 'Bellaire');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPT_LOCATIONS VALUES (5, 'Sugarland');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPT_LOCATIONS VALUES (5, 'Houston');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> INSERT INTO PROJECT VALUES ('ProductX', 1, 'Bellaire', 5);
+
+1 row created.
+
+Elapsed: 00:00:00.02
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO PROJECT VALUES ('ProductY', 2, 'Sugarland', 5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO PROJECT VALUES ('ProductZ', 3, 'Houston', 5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO PROJECT VALUES ('Computerization', 10, 'Stafford', 4);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO PROJECT VALUES ('Reorganization', 20, 'Houston', 1);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO PROJECT VALUES ('Newbenefits', 30, 'Stafford', 4);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> INSERT INTO DEPENDANT VALUES ('333445555', 'Alice', 'F', '05-APR-1986', 'Daughter');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPENDANT VALUES ('333445555', 'Theodore', 'M', '25-OCT-1983', 'Son');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPENDANT VALUES ('333445555', 'Joy', 'F', '03-MAY-1958', 'Spouse');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPENDANT VALUES ('987654321', 'Abner', 'M', '28-FEB-1942', 'Spouse');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPENDANT VALUES ('123456789', 'Michael', 'M', '04-JAN-1988', 'Son');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPENDANT VALUES ('123456789', 'Alice', 'F', '30-DEC-1988', 'Daughter');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO DEPENDANT VALUES ('123456789', 'Elizabeth', 'F', '05-MAY-1967', 'Spouse');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> INSERT INTO WORKS_ON VALUES ('123456789', 1, 32.5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('123456789', 2, 7.5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('666884444', 3, 40.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('453453453', 1, 20.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('453453453', 2, 20.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('333445555', 2, 10.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('333445555', 3, 10.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('333445555', 10, 10.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('333445555', 20, 10.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('999887777', 30, 30.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('999887777', 10, 10.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('987987987', 10, 35.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('987987987', 30, 5.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('987654321', 30, 20.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('987654321', 20, 15.0);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> INSERT INTO WORKS_ON VALUES ('888665555', 20, NULL);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> start U:/itc341/group_project/functions.sql
+SQL> -- functions.sq1
+SQL> -- Creates the triggers for the company database.
+SQL> -- Ian Kirkpatrick, Rohith Kamisetty
+SQL> -- ITC 341 Group Project		     Apr. 23, 2018
+SQL> 
+SQL> set linesize 120;
+SQL> set echo on;
+SQL> set serveroutput on;
+SQL> set timing on;
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION get_dept_name(EMPSSN IN EMPLOYEE.ssn%type)
+  2    RETURN DEPARTMENT.dname%type
+  3  IS
+  4    mm DEPARTMENT.dname%type;
+  5  BEGIN
+  6    mm := '';  -- initially empty value
+  7  
+  8    SELECT dname INTO mm FROM EMPLOYEE E, DEPARTMENT D
+  9    WHERE E.dno = D.dnumber AND E.ssn = EMPSSN ;
+ 10  
+ 11    RETURN(mm);
+ 12  
+ 13    -- exception handling
+ 14  
+ 15    EXCEPTION
+ 16  	 when NO_DATA_FOUND then
+ 17  	   dbms_output.put_line('No data found');
+ 18  	   RETURN(mm);
+ 19  
+ 20  END;
+ 21  /
+
+Function created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION get_mgr_name(DEPT_NM IN DEPARTMENT.dname%type)
+  2    RETURN EMPLOYEE.fname%type
+  3  IS
+  4    mgr_name EMPLOYEE.fname%type;
+  5  BEGIN
+  6    mgr_name := '';	-- initially empty value
+  7  
+  8    SELECT (fname || ' ' || minit || ' ' || lname) INTO mgr_name FROM EMPLOYEE
+  9    INNER JOIN DEPARTMENT
+ 10    ON DEPARTMENT.mgr_ssn = EMPLOYEE.ssn
+ 11    WHERE DEPARTMENT.dname = DEPT_NM;
+ 12  
+ 13    RETURN(mgr_name);
+ 14  
+ 15    -- exception handling
+ 16  
+ 17    EXCEPTION
+ 18  	 when NO_DATA_FOUND then
+ 19  	   dbms_output.put_line('No data found');
+ 20  	   RETURN(mgr_name);
+ 21  
+ 22  END;
+ 23  /
+
+Function created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL> 
+SQL> CREATE OR REPLACE FUNCTION get_prjmgr_name(PROJ IN PROJECT.pname%type)
+  2    RETURN EMPLOYEE.fname%type
+  3  IS
+  4    mgr_name EMPLOYEE.fname%type;
+  5  BEGIN
+  6    mgr_name := '';	-- initially empty value
+  7  
+  8    SELECT (fname || ' ' || minit || ' ' || lname) INTO mgr_name FROM EMPLOYEE
+  9    INNER JOIN DEPARTMENT
+ 10    ON DEPARTMENT.mgr_ssn = EMPLOYEE.ssn
+ 11    INNER JOIN PROJECT
+ 12    ON DEPARTMENT.dnumber = PROJECT.dnum
+ 13    WHERE PROJECT.pname = PROJ;
+ 14  
+ 15    RETURN(mgr_name);
+ 16  
+ 17    -- exception handling
+ 18  
+ 19    EXCEPTION
+ 20  	 when NO_DATA_FOUND then
+ 21  	   dbms_output.put_line('No data found');
+ 22  	   RETURN(mgr_name);
+ 23  
+ 24  END;
+ 25  /
+
+Function created.
+
+Elapsed: 00:00:00.03
+SQL> show errors
+No errors.
+SQL> 
+SQL> ---Procedure
+SQL> 
+SQL> CREATE OR REPLACE PROCEDURE increase_salary(EMP_SSN IN EMPLOYEE.fname%type, PCNT IN INT)
+  2  AS
+  3    new_salary INT;
+  4  BEGIN
+  5    new_salary := '';  -- initially empty value
+  6  
+  7    UPDATE EMPLOYEE SET salary = CAST((CAST(salary AS DECIMAL(12,2)) * PCNT / 100) AS INT) + salary
+  8    WHERE ssn = EMP_SSN;
+  9  
+ 10    SELECT salary INTO new_salary FROM EMPLOYEE WHERE ssn = EMP_SSN;
+ 11    dbms_output.put_line('The new salary for this employee is ' || CAST(new_salary AS VARCHAR) || '.');
+ 12  
+ 13    -- exception handling
+ 14  
+ 15    EXCEPTION
+ 16  	 when NO_DATA_FOUND then
+ 17  	   dbms_output.put_line('No data found');
+ 18  
+ 19  END;
+ 20  /
+
+Procedure created.
+
+Elapsed: 00:00:00.06
+SQL> show errors
+No errors.
+SQL> 
+SQL> start U:/itc341/group_project/triggers.sql
+SQL> -- triggers.sq1
+SQL> -- Creates the triggers for the company database.
+SQL> -- Ian Kirkpatrick, Rohith Kamisetty
+SQL> -- ITC 341 Group Project		     Apr. 23, 2018
+SQL> 
+SQL> set linesize 120;
+SQL> set echo on;
+SQL> set serveroutput on;
+SQL> set timing on;
+SQL> 
+SQL> -- (for department table only)
+SQL> CREATE OR REPLACE TRIGGER emp_trigger
+  2  AFTER INSERT ON EMPLOYEE
+  3  BEGIN
+  4  	     UPDATE EMPLOYEE SET fname = UPPER(fname);
+  5    UPDATE EMPLOYEE SET minit = UPPER(minit);
+  6    UPDATE EMPLOYEE SET lname = UPPER(lname);
+  7    UPDATE EMPLOYEE SET ssn = UPPER(ssn);
+  8    UPDATE EMPLOYEE SET address = UPPER(address);
+  9    UPDATE EMPLOYEE SET sex = UPPER(sex);
+ 10    UPDATE EMPLOYEE SET super_ssn = UPPER(super_ssn);
+ 11  END;
+ 12  /
+
+Trigger created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL> 
+SQL> -- (for department table only)
+SQL> CREATE OR REPLACE TRIGGER dept_trigger
+  2  AFTER INSERT ON DEPARTMENT
+  3  BEGIN
+  4  	     UPDATE DEPARTMENT SET dname = UPPER(dname);
+  5  	     UPDATE DEPARTMENT SET mgr_ssn = UPPER(mgr_ssn);
+  6  END;
+  7  /
+
+Trigger created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL> 
+SQL> -- (for dept_location table only)
+SQL> CREATE OR REPLACE TRIGGER dept_loc_trigger
+  2  AFTER INSERT ON DEPT_LOCATIONS
+  3  BEGIN
+  4  	     UPDATE DEPT_LOCATIONS SET dlocation = UPPER(dlocation);
+  5  END;
+  6  /
+
+Trigger created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL> 
+SQL> -- (for project table only)
+SQL> CREATE OR REPLACE TRIGGER proj_trigger
+  2  AFTER INSERT ON PROJECT
+  3  BEGIN
+  4  	     UPDATE PROJECT SET pname = UPPER(pname);
+  5  	     UPDATE PROJECT SET plocation = UPPER(plocation);
+  6  END;
+  7  /
+
+Trigger created.
+
+Elapsed: 00:00:00.00
+SQL> show errors
+No errors.
+SQL> 
+SQL> -- (for works_on table only)
+SQL> CREATE OR REPLACE TRIGGER works_on_trigger
+  2  AFTER INSERT ON WORKS_ON
+  3  BEGIN
+  4  	     UPDATE WORKS_ON SET essn = UPPER(essn);
+  5  END;
+  6  /
+
+Trigger created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL> 
+SQL> -- (for dependant table only)
+SQL> CREATE OR REPLACE TRIGGER depend_trigger
+  2  AFTER INSERT ON DEPENDANT
+  3  BEGIN
+  4  	     UPDATE DEPENDANT SET dependant_name = UPPER(dependant_name);
+  5  	     UPDATE DEPENDANT SET essn = UPPER(essn);
+  6  	     UPDATE DEPENDANT SET sex = UPPER(sex);
+  7  	     UPDATE DEPENDANT SET relationship = UPPER(relationship);
+  8  END;
+  9  /
+
+Trigger created.
+
+Elapsed: 00:00:00.01
+SQL> show errors
+No errors.
+SQL> start U:/itc341/group_project/package.sql
+SQL> -- package.sq1
+SQL> -- Creates the triggers for the company database.
+SQL> -- Ian Kirkpatrick, Rohith Kamisetty
+SQL> -- ITC 341 Group Project		     Apr. 23, 2018
+SQL> 
+SQL> set linesize 120;
+SQL> set echo on;
+SQL> set serveroutput on;
+SQL> set timing on;
+SQL> 
+SQL> -- Package that includes methods to:
+SQL> -- 1. add a dependent for any given valid employee.
+SQL> -- 2. remove a dependent for any given valid employee
+SQL> 
+SQL> -- **** Package Declaration **** --
+SQL> create or replace package emp_package as
+  2  	 procedure add_dep( ssn in DEPENDANT.essn%type, dep in DEPENDANT.dependant_name%type, s in DEPENDANT.sex%type, bd in DEPENDANT.bdate%type, rel in DEPENDANT.relationship%type );
+  3  	 procedure rem_dep( ssn in DEPENDANT.essn%type, dep in DEPENDANT.dependant_name%type );
+  4  end;
+  5  /
+
+Package created.
+
+Elapsed: 00:00:00.11
+SQL> show errors
+No errors.
+SQL> 
+SQL> -- **** Package Body **** --
+SQL> create or replace package body emp_package as
+  2  
+  3  	 procedure add_dep( ssn in DEPENDANT.essn%type, dep in DEPENDANT.dependant_name%type, s in DEPENDANT.sex%type, bd in DEPENDANT.bdate%type, rel in DEPENDANT.relationship%type )
+  4  	     as
+  5  		     test INT;
+  6  	     begin
+  7  
+  8  		     select count(*) into test from EMPLOYEE e where ssn = e.ssn;
+  9  
+ 10  		     if(test = null) then
+ 11  			     dbms_output.put_line('Employee not found');
+ 12  		     else
+ 13  			     INSERT INTO DEPENDANT VALUES (ssn,dep,s,bd,rel);
+ 14  		     end if;
+ 15  
+ 16  		     -- exception handling
+ 17  		     exception
+ 18  		     when NO_DATA_FOUND then
+ 19  			     dbms_output.put_line('No data found');
+ 20  	 end;
+ 21  
+ 22  
+ 23  	     procedure rem_dep( ssn in DEPENDANT.essn%type, dep in DEPENDANT.dependant_name%type )
+ 24  	     as
+ 25  		     test INT;
+ 26  	     begin
+ 27  
+ 28  		     select COUNT(*) into test from DEPENDANT d where ssn = d.essn and dep = dependant_name;
+ 29  
+ 30  		     if(test = null) then
+ 31  			     dbms_output.put_line('Dependant or employee not found');
+ 32  		     else
+ 33  			     delete from DEPENDANT d where d.dependant_name = dep;
+ 34  		     end if;
+ 35  
+ 36  		     -- exception handling
+ 37  		     exception
+ 38  		     when NO_DATA_FOUND then
+ 39  			     dbms_output.put_line('No data found');
+ 40  	     end;
+ 41  end;
+ 42  /
+
+Package body created.
+
+Elapsed: 00:00:00.02
+SQL> show errors
+No errors.
+SQL> start U:/itc341/group_project/test_tiggers.sql
+SP2-0310: unable to open file "U:/itc341/group_project/test_tiggers.sql"
+SQL> start U:/itc341/group_project/test_triggers.sql
+SQL> -- test_triggers.sq1
+SQL> -- Creates the triggers for the company database.
+SQL> -- Ian Kirkpatrick, Rohith Kamisetty
+SQL> -- ITC 341 Group Project		     Apr. 23, 2018
+SQL> 
+SQL> set linesize 120;
+SQL> set echo on;
+SQL> set serveroutput on;
+SQL> set timing on;
+SQL> 
+SQL> -- REQUIRES insert_data to be run before tests are run.
+SQL> 
+SQL> -- Test emp_trigger
+SQL> SELECT * FROM EMPLOYEE;
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+John                 B Smith                123456789 09-JAN-65                                                         
+731 Fondren, Houston, TX                                                                             M      30000       
+333445555          5                                                                                                    
+                                                                                                                        
+Franklin             T Wong                 333445555 08-DEC-55                                                         
+638 Voss, Houston, TX                                                                                M      40000       
+888665555          5                                                                                                    
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+                                                                                                                        
+Alicia               J Zelaya               999887777 19-JAN-68                                                         
+3321 Castle, Spring, TX                                                                              F      25000       
+987654321          4                                                                                                    
+                                                                                                                        
+Jennifer             S Wallace              987654321 20-JUN-41                                                         
+291 Berry, Bellaire, TX                                                                              F      43000       
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+888665555          4                                                                                                    
+                                                                                                                        
+Ramesh               K Narayan              666884444 15-SEP-62                                                         
+975 Fire Oak, Humble, TX                                                                             M      38000       
+333445555          5                                                                                                    
+                                                                                                                        
+Joyce                A English              453453453 31-JUL-72                                                         
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+5631 Rice, Houston, TX                                                                               F      25000       
+333445555          5                                                                                                    
+                                                                                                                        
+Ahmad                V Jabbar               987987987 29-MAR-69                                                         
+980 Dallas, Houston, TX                                                                              M      25000       
+987654321          4                                                                                                    
+                                                                                                                        
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+James                E Borg                 888665555 10-NOV-73                                                         
+450 Stone, Houston, TX                                                                               M      55000       
+                   1                                                                                                    
+                                                                                                                        
+
+8 rows selected.
+
+Elapsed: 00:00:00.06
+SQL> 
+SQL> -- Insert into table.
+SQL> INSERT INTO EMPLOYEE VALUES ('Ian', 'A', 'Kirkpatrick', '999999999', '09-JAN-1965', '232 Lawson, Saline, MI', 'M', 95000, '123456789', 5);
+
+1 row created.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> -- Characters should be uppercase now.
+SQL> SELECT * FROM EMPLOYEE;
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+JOHN                 B SMITH                123456789 09-JAN-65                                                         
+731 FONDREN, HOUSTON, TX                                                                             M      30000       
+333445555          5                                                                                                    
+                                                                                                                        
+FRANKLIN             T WONG                 333445555 08-DEC-55                                                         
+638 VOSS, HOUSTON, TX                                                                                M      40000       
+888665555          5                                                                                                    
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+                                                                                                                        
+ALICIA               J ZELAYA               999887777 19-JAN-68                                                         
+3321 CASTLE, SPRING, TX                                                                              F      25000       
+987654321          4                                                                                                    
+                                                                                                                        
+JENNIFER             S WALLACE              987654321 20-JUN-41                                                         
+291 BERRY, BELLAIRE, TX                                                                              F      43000       
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+888665555          4                                                                                                    
+                                                                                                                        
+RAMESH               K NARAYAN              666884444 15-SEP-62                                                         
+975 FIRE OAK, HUMBLE, TX                                                                             M      38000       
+333445555          5                                                                                                    
+                                                                                                                        
+JOYCE                A ENGLISH              453453453 31-JUL-72                                                         
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+5631 RICE, HOUSTON, TX                                                                               F      25000       
+333445555          5                                                                                                    
+                                                                                                                        
+AHMAD                V JABBAR               987987987 29-MAR-69                                                         
+980 DALLAS, HOUSTON, TX                                                                              M      25000       
+987654321          4                                                                                                    
+                                                                                                                        
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+JAMES                E BORG                 888665555 10-NOV-73                                                         
+450 STONE, HOUSTON, TX                                                                               M      55000       
+                   1                                                                                                    
+                                                                                                                        
+IAN                  A KIRKPATRICK          999999999 09-JAN-65                                                         
+232 LAWSON, SALINE, MI                                                                               M      95000       
+123456789          5                                                                                                    
+
+FNAME                M LNAME                SSN       BDATE                                                             
+-------------------- - -------------------- --------- ---------                                                         
+ADDRESS                                                                                              S     SALARY       
+---------------------------------------------------------------------------------------------------- - ----------       
+SUPER_SSN        DNO                                                                                                    
+--------- ----------                                                                                                    
+                                                                                                                        
+
+9 rows selected.
+
+Elapsed: 00:00:00.07
+SQL> 
+SQL> 
+SQL> 
+SQL> -- Test dept_trigger
+SQL> SELECT * FROM DEPARTMENT;
+
+DNAME                   DNUMBER MGR_SSN   MGR_START                                                                     
+-------------------- ---------- --------- ---------                                                                     
+Research                      5 333445555                                                                               
+Administration                4 987654321                                                                               
+Headquarters                  1 888665555                                                                               
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> -- Insert into table.
+SQL> UPDATE DEPARTMENT SET mgr_ssn = '333445555' WHERE dnumber = 6;
+
+0 rows updated.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- Characters should be uppercase now.
+SQL> SELECT * FROM DEPARTMENT;
+
+DNAME                   DNUMBER MGR_SSN   MGR_START                                                                     
+-------------------- ---------- --------- ---------                                                                     
+Research                      5 333445555                                                                               
+Administration                4 987654321                                                                               
+Headquarters                  1 888665555                                                                               
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> -- Test dept_loc_trigger
+SQL> SELECT * FROM DEPT_LOCATIONS;
+
+   DNUMBER DLOCATION                                                                                                    
+---------- --------------------                                                                                         
+         1 Houston                                                                                                      
+         4 Stafford                                                                                                     
+         5 Bellaire                                                                                                     
+         5 Houston                                                                                                      
+         5 Sugarland                                                                                                    
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> -- Insert into table.
+SQL> INSERT INTO DEPT_LOCATIONS VALUES (1, 'Sugarland');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- Characters should be uppercase now.
+SQL> SELECT * FROM DEPT_LOCATIONS;
+
+   DNUMBER DLOCATION                                                                                                    
+---------- --------------------                                                                                         
+         1 HOUSTON                                                                                                      
+         1 SUGARLAND                                                                                                    
+         4 STAFFORD                                                                                                     
+         5 BELLAIRE                                                                                                     
+         5 HOUSTON                                                                                                      
+         5 SUGARLAND                                                                                                    
+
+6 rows selected.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> 
+SQL> -- Test proj_trigger
+SQL> SELECT * FROM PROJECT;
+
+PNAME                   PNUMBER PLOCATION                  DNUM                                                         
+-------------------- ---------- -------------------- ----------                                                         
+ProductX                      1 Bellaire                      5                                                         
+ProductY                      2 Sugarland                     5                                                         
+ProductZ                      3 Houston                       5                                                         
+Computerization              10 Stafford                      4                                                         
+Reorganization               20 Houston                       1                                                         
+Newbenefits                  30 Stafford                      4                                                         
+
+6 rows selected.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> -- Insert into table.
+SQL> INSERT INTO PROJECT VALUES ('SquirrelX', 1, 'Sugarland', 5);
+INSERT INTO PROJECT VALUES ('SquirrelX', 1, 'Sugarland', 5)
+*
+ERROR at line 1:
+ORA-00001: unique constraint (OPS$CENTRAL\KIRKP1IA.PROJPKEY) violated 
+
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- Characters should be uppercase now.
+SQL> SELECT * FROM PROJECT;
+
+PNAME                   PNUMBER PLOCATION                  DNUM                                                         
+-------------------- ---------- -------------------- ----------                                                         
+ProductX                      1 Bellaire                      5                                                         
+ProductY                      2 Sugarland                     5                                                         
+ProductZ                      3 Houston                       5                                                         
+Computerization              10 Stafford                      4                                                         
+Reorganization               20 Houston                       1                                                         
+Newbenefits                  30 Stafford                      4                                                         
+
+6 rows selected.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> 
+SQL> 
+SQL> -- Test works_on_trigger
+SQL> SELECT * FROM WORKS_ON;
+
+ESSN             PNO      HOURS                                                                                         
+--------- ---------- ----------                                                                                         
+123456789          1       32.5                                                                                         
+123456789          2        7.5                                                                                         
+666884444          3         40                                                                                         
+453453453          1         20                                                                                         
+453453453          2         20                                                                                         
+333445555          2         10                                                                                         
+333445555          3         10                                                                                         
+333445555         10         10                                                                                         
+333445555         20         10                                                                                         
+999887777         30         30                                                                                         
+999887777         10         10                                                                                         
+
+ESSN             PNO      HOURS                                                                                         
+--------- ---------- ----------                                                                                         
+987987987         10         35                                                                                         
+987987987         30          5                                                                                         
+987654321         30         20                                                                                         
+987654321         20         15                                                                                         
+888665555         20                                                                                                    
+
+16 rows selected.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> -- Insert into table.
+SQL> INSERT INTO WORKS_ON VALUES ('123456789', 10, 32.5);
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> -- Characters should be uppercase now.
+SQL> SELECT * FROM WORKS_ON;
+
+ESSN             PNO      HOURS                                                                                         
+--------- ---------- ----------                                                                                         
+123456789          1       32.5                                                                                         
+123456789          2        7.5                                                                                         
+666884444          3         40                                                                                         
+453453453          1         20                                                                                         
+453453453          2         20                                                                                         
+333445555          2         10                                                                                         
+333445555          3         10                                                                                         
+333445555         10         10                                                                                         
+333445555         20         10                                                                                         
+999887777         30         30                                                                                         
+999887777         10         10                                                                                         
+
+ESSN             PNO      HOURS                                                                                         
+--------- ---------- ----------                                                                                         
+987987987         10         35                                                                                         
+987987987         30          5                                                                                         
+987654321         30         20                                                                                         
+987654321         20         15                                                                                         
+888665555         20                                                                                                    
+123456789         10       32.5                                                                                         
+
+17 rows selected.
+
+Elapsed: 00:00:00.02
+SQL> 
+SQL> 
+SQL> 
+SQL> -- Test depend_trigger
+SQL> SELECT * FROM DEPENDANT;
+
+ESSN      DEPENDANT_NAME       S BDATE     RELATIONSHIP                                                                 
+--------- -------------------- - --------- ---------------                                                              
+333445555 Alice                F 05-APR-86 Daughter                                                                     
+333445555 Theodore             M 25-OCT-83 Son                                                                          
+333445555 Joy                  F 03-MAY-58 Spouse                                                                       
+987654321 Abner                M 28-FEB-42 Spouse                                                                       
+123456789 Michael              M 04-JAN-88 Son                                                                          
+123456789 Alice                F 30-DEC-88 Daughter                                                                     
+123456789 Elizabeth            F 05-MAY-67 Spouse                                                                       
+
+7 rows selected.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> -- Insert into table.
+SQL> INSERT INTO DEPENDANT VALUES ('123456789', 'Ian', 'M', '05-MAY-1967', 'Brother');
+
+1 row created.
+
+Elapsed: 00:00:00.00
+SQL> COMMIT;
+
+Commit complete.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- Characters should be uppercase now.
+SQL> SELECT * FROM DEPENDANT;
+
+ESSN      DEPENDANT_NAME       S BDATE     RELATIONSHIP                                                                 
+--------- -------------------- - --------- ---------------                                                              
+333445555 ALICE                F 05-APR-86 DAUGHTER                                                                     
+333445555 THEODORE             M 25-OCT-83 SON                                                                          
+333445555 JOY                  F 03-MAY-58 SPOUSE                                                                       
+987654321 ABNER                M 28-FEB-42 SPOUSE                                                                       
+123456789 MICHAEL              M 04-JAN-88 SON                                                                          
+123456789 ALICE                F 30-DEC-88 DAUGHTER                                                                     
+123456789 ELIZABETH            F 05-MAY-67 SPOUSE                                                                       
+123456789 IAN                  M 05-MAY-67 BROTHER                                                                      
+
+8 rows selected.
+
+Elapsed: 00:00:00.01
+SQL> start U:/itc341/group_project/test_functions.sql
+SP2-0310: unable to open file "U:/itc341/group_project/test_functions.sql"
+SQL> start U:/itc341/group_project/test_functions.sql
+SQL> -- test_functions.sq1
+SQL> -- Creates the triggers for the company database.
+SQL> -- Ian Kirkpatrick, Rohith Kamisetty
+SQL> -- ITC 341 Group Project		     Apr. 23, 2018
+SQL> 
+SQL> set linesize 120;
+SQL> set echo on;
+SQL> set serveroutput on;
+SQL> set timing on;
+SQL> 
+SQL> -- REQUIRES insert_data to be run before tests are run.
+SQL> 
+SQL> -- **** Test **** -- get_dept_name call
+SQL> DECLARE
+  2  	     deptname DEPARTMENT.dname%type;
+  3  BEGIN
+  4  -- function call
+  5  	     deptname := get_dept_name('123456789');
+  6  	     dbms_output.put_line('Department name for 123456789 is "' || deptname ||'"');
+  7  END;
+  8  /
+Department name for 123456789 is "Research"                                                                             
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> 
+SQL> -- **** Test **** -- get_mgr_name call
+SQL> DECLARE
+  2  	     mgr_name EMPLOYEE.fname%type;
+  3  BEGIN
+  4  -- function call
+  5  	     mgr_name := get_mgr_name('Research');
+  6  	     dbms_output.put_line('Manager name for Research is "' || mgr_name || '"');
+  7  END;
+  8  /
+Manager name for Research is "FRANKLIN T WONG"                                                                          
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> -- **** Test **** -- get_prjmgr_name call
+SQL> DECLARE
+  2  	     mgr_name EMPLOYEE.fname%type;
+  3  BEGIN
+  4  -- function call
+  5  	     mgr_name := get_prjmgr_name('ProductZ');
+  6  	     dbms_output.put_line('Manager name of the department for ProductZ is "' || mgr_name || '"');
+  7  END;
+  8  /
+Manager name of the department for ProductZ is "FRANKLIN T WONG"                                                        
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> -- **** Test **** -- get_prjmgr_name call
+SQL> 
+SQL> -- Before call: note the salary.
+SQL> SELECT fname, minit, lname, salary FROM EMPLOYEE WHERE ssn = '888665555';
+
+FNAME                M LNAME                    SALARY                                                                  
+-------------------- - -------------------- ----------                                                                  
+JAMES                E BORG                      55000                                                                  
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- Increase salary by 10%
+SQL> exec increase_salary('888665555', 10);
+The new salary for this employee is 60500.                                                                              
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.01
+SQL> 
+SQL> -- After call: note the salary increased by 10 percent.
+SQL> SELECT fname, minit, lname, salary FROM EMPLOYEE WHERE ssn = '888665555';
+
+FNAME                M LNAME                    SALARY                                                                  
+-------------------- - -------------------- ----------                                                                  
+JAMES                E BORG                      60500                                                                  
+
+Elapsed: 00:00:00.00
+SQL> start U:/itc341/group_project/test_package.sql
+SQL> -- test_package.sq1
+SQL> -- Creates the triggers for the company database.
+SQL> -- Ian Kirkpatrick, Rohith Kamisetty
+SQL> -- ITC 341 Group Project		     Apr. 23, 2018
+SQL> 
+SQL> set linesize 120;
+SQL> set echo on;
+SQL> set serveroutput on;
+SQL> set timing on;
+SQL> 
+SQL> -- REQUIRES insert_data to be run before tests are run.
+SQL> 
+SQL> -- **** Test package add dependent ****
+SQL> -- See how many dependents are in the database for employee with essn='987654321'
+SQL> SELECT * FROM DEPENDANT WHERE essn = '987654321';
+
+ESSN      DEPENDANT_NAME       S BDATE     RELATIONSHIP                                                                 
+--------- -------------------- - --------- ---------------                                                              
+987654321 ABNER                M 28-FEB-42 SPOUSE                                                                       
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- Call the procedure to add dependent
+SQL> exec emp_package.add_dep('987654321', 'Jack N Box', 'M', '16-MAR-1989', 'Brother');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- See that the dependent was added.
+SQL> SELECT * FROM DEPENDANT WHERE essn = '987654321';
+
+ESSN      DEPENDANT_NAME       S BDATE     RELATIONSHIP                                                                 
+--------- -------------------- - --------- ---------------                                                              
+987654321 ABNER                M 28-FEB-42 SPOUSE                                                                       
+987654321 JACK N BOX           M 16-MAR-89 BROTHER                                                                      
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> 
+SQL> -- **** Test package remove dependent ****
+SQL> -- See the dependents in the database for employee with essn='987654321'
+SQL> SELECT * FROM DEPENDANT WHERE essn = '987654321';
+
+ESSN      DEPENDANT_NAME       S BDATE     RELATIONSHIP                                                                 
+--------- -------------------- - --------- ---------------                                                              
+987654321 ABNER                M 28-FEB-42 SPOUSE                                                                       
+987654321 JACK N BOX           M 16-MAR-89 BROTHER                                                                      
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- Call the procedure to add dependent
+SQL> exec emp_package.rem_dep('987654321', 'Jack N Box');
+
+PL/SQL procedure successfully completed.
+
+Elapsed: 00:00:00.00
+SQL> 
+SQL> -- See that the dependent was removed.
+SQL> SELECT * FROM DEPENDANT WHERE essn = '987654321';
+
+ESSN      DEPENDANT_NAME       S BDATE     RELATIONSHIP                                                                 
+--------- -------------------- - --------- ---------------                                                              
+987654321 ABNER                M 28-FEB-42 SPOUSE                                                                       
+987654321 JACK N BOX           M 16-MAR-89 BROTHER                                                                      
+
+Elapsed: 00:00:00.00
+SQL> spool off

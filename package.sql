@@ -1,6 +1,7 @@
-
-
-
+-- package.sq1
+-- Creates the triggers for the company database.
+-- Ian Kirkpatrick, Rohith Kamisetty
+-- ITC 341 Group Project		Apr. 23, 2018
 
 set linesize 120;
 set echo on;
