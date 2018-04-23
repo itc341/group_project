@@ -10,6 +10,7 @@ set timing on;
 
 -- REQUIRES insert_data to be run before tests are run.
 
+-- **** Test package add dependent ****
 -- See how many dependents are in the database for employee with essn='987654321'
 SELECT * FROM DEPENDANT WHERE essn = '987654321';
 
@@ -20,6 +21,7 @@ exec emp_package.add_dep('987654321', 'Jack N Box', 'M', '16-MAR-1989', 'Brother
 SELECT * FROM DEPENDANT WHERE essn = '987654321';
 
 
+-- **** Test package remove dependent ****
 -- See the dependents in the database for employee with essn='987654321'
 SELECT * FROM DEPENDANT WHERE essn = '987654321';
 
